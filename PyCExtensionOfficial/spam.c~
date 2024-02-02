@@ -1,4 +1,4 @@
- #include "Python.h"
+#include "Python.h"
 
 PyObject *spam(void) {
    PyObject_Print(PyUnicode_FromFormat("Spam!"), stdout, 0);
