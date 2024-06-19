@@ -112,7 +112,7 @@ static PyMemberDef CustomMat_members[] = {
     {NULL}
 };
 // we define a single method, Custom.name() that outputs the objects name as the concatenation of the matfile and savefile names
-static PyObject * CustomMat_name(CustomObject *self, PyObject *Py_UNUSED(ignored)) {
+static PyObject * CustomMat_name(CustomMatObject *self, PyObject *Py_UNUSED(ignored)) {
    if (self->matfile==NULL) {
       PyErr_SetString(PyExc_AttributeError, "matfile");
       return NULL;
@@ -129,41 +129,50 @@ static PyObject * CustomMat_name(CustomObject *self, PyObject *Py_UNUSED(ignored
 static PyTypeObject CustomType = {
 //   .ob_base = PyVarObject_HEAD_INIT(NULL, 0),
 //   .tp_init = (initproc) CustomMat_init,
-//   ...
+//   .tp_methods = CustomMat_methods
 //   .tp_new = CustoMat_new,
 //   .tp_dealloc = (destructor) CustomMat_dealloc,
 //   .tp_members = CustomMat_members,
+//   .tp_methods = Custom_methods,
+//   ...
 }
+
+static PyMethodDef CustomMat_methods[] = {
+   {"name", (PyCFunction) CustomMat_name, METH_NOARGS,
+	    "numeric matrix custom type"},
+   {NULL} //sentinel
+};
+
   *
   */
 
 static PyObject *MatmultError = NULL;
-static PyObject * matmult_system(PyObject *self, PyObject *args);
+static PyObject * matclass_system(PyObject *self, PyObject *args);
 
-// precise that the function matmult_system can be added with MTH_VARARGS and METH_KEYWORDS
+// precise that the function matclass_system can be added with MTH_VARARGS and METH_KEYWORDS
 static PyMethodDef MatmultMethods[] = {
-   {"system", matmult_system, METH_VARARGS | METH_KEYWORDS,
+   {"system", matclass_system, METH_VARARGS | METH_KEYWORDS,
 	    "numeric matrix multiplication"},
    {NULL,NULL,0,NULL}
 };
 
-static struct PyModuleDef matmultmodule = {
+static struct PyModuleDef matclassmodule = {
    PyModuleDef_HEAD_INIT,
-   "matmult", // name of the module
-    NULL, // module documentation, may be NULL (matmult_doc)
+   "matclass", // name of the module
+    NULL, // module documentation, may be NULL (matclass_doc)
    -1,        // size of per-interpreter state of the module
               // or -1 if the module keeps state in global variables
    MatmultMethods  // defined above
 };
 
 
-PyMODINIT_FUNC PyInit_matmult(void) {
+PyMODINIT_FUNC PyInit_matclass(void) {
    PyObject *m;
 
-   m = PyModule_Create(&matmultmodule);
+   m = PyModule_Create(&matclassmodule);
    if (m==NULL) 
       return NULL;
-   MatmultError = PyErr_NewException("matmult.error", NULL, NULL);
+   MatmultError = PyErr_NewException("matclass.error", NULL, NULL);
    Py_XINCREF(MatmultError);
    if (PyModule_AddObject(m, "error", MatmultError) < 0) {
        Py_XDECREF(MatmultError);
@@ -175,7 +184,7 @@ PyMODINIT_FUNC PyInit_matmult(void) {
 }
 
 
-static PyObject * matmult_system(PyObject *self, PyObject *args)
+static PyObject * matclass_system(PyObject *self, PyObject *args)
 {
    PyObject *pyStr1 = NULL;
    PyObject *pyStr2 = NULL;

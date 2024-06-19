@@ -112,7 +112,7 @@ static PyMemberDef CustomMat_members[] = {
     {NULL}
 };
 // we define a single method, Custom.name() that outputs the objects name as the concatenation of the matfile and savefile names
-static PyObject * CustomMat_name(CustomObject *self, PyObject *Py_UNUSED(ignored)) {
+static PyObject * CustomMat_name(CustomMatObject *self, PyObject *Py_UNUSED(ignored)) {
    if (self->matfile==NULL) {
       PyErr_SetString(PyExc_AttributeError, "matfile");
       return NULL;
@@ -129,11 +129,20 @@ static PyObject * CustomMat_name(CustomObject *self, PyObject *Py_UNUSED(ignored
 static PyTypeObject CustomType = {
 //   .ob_base = PyVarObject_HEAD_INIT(NULL, 0),
 //   .tp_init = (initproc) CustomMat_init,
-//   ...
+//   .tp_methods = CustomMat_methods
 //   .tp_new = CustoMat_new,
 //   .tp_dealloc = (destructor) CustomMat_dealloc,
 //   .tp_members = CustomMat_members,
+//   .tp_methods = Custom_methods,
+//   ...
 }
+
+static PyMethodDef CustomMat_methods[] = {
+   {"name", (PyCFunction) CustomMat_name, METH_NOARGS,
+	    "numeric matrix custom type"},
+   {NULL} //sentinel
+};
+
   *
   */
 
@@ -206,12 +215,12 @@ static PyObject * matmult_system(PyObject *self, PyObject *args)
     }
    sts = strcpy(mat_file, (const char*) pyStr1);
    if (sts<0) {
-        PyErr_SetString(MatmultError, "numeric mult inputread failed");
+        PyErr_SetString(MatmultError, "First String mult inputread failed");
         return NULL;
    }   
    sts = strcpy(save_file, (const char*) yStr2);
    if (sts<0) {
-        PyErr_SetString(MatmultError, "numeric mult inputread failed");
+        PyErr_SetString(MatmultError, "Second String mult inputread failed");
         return NULL;
    }   
    sts = readvalues(mat_file,a, b);
@@ -224,12 +233,14 @@ static PyObject * matmult_system(PyObject *self, PyObject *args)
 //      return NULL;
 //   if (!PyArg_ParseTuple(args, "(ddddddddd)(ddd)", &a, &b))
 //      return NULL;   matClassInst.setABC(a,b,calloc);
-//
+
+   // THE CORE OF THIS MODULE:
    sts = matClassInst.wrapper_dgesv(&colloc);  // operate on doubles inside the class
    if (sts <0) {
 	   PyErr_SetString(MatmultError, "numeric mult failed");
 	   return NULL;
    }
+   // copy the result, though we could access it direct since it is public
    calloc = matClassInst.getC();
 //   printf("%lf %lf %lf", calloc[0], calloc[1], calloc[2]);
    sts = savevalues((const char*) save_file, calloc);
