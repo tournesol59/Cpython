@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <math.h>
+#include "lapacke.h"  // prefer set INCLUDE DIR in setup.py for portability
+
+
+extern "C" int call_dgesv(int n, double *A, double *B) ;
+extern "C" int readvalues(const char *matfile, double *a, double *b) ;
+extern "C" int matmult(int n, int m, int p, double *a, double *b, double *c) ;
+exter "C" int savevalues(const char* savefile, double *c);
+
+public class MATCLASS {
+
+   public:
+	   MATCLASS(int n, const char *matFile, const char *saveFile);
+	   MATCLASS(const MATCLASS &M);
+	   ~MATCLASS();
+	   double *A;
+	   double *B;
+	   double *C;
+           int wrapper_dgesv();
+
+   private:
+	   char *mat_file, *save_file;
+	   int dim;
+	   //int type_eqn, type_ovp, type_predict, repeat_predict;
+	   //int num_ranges, num_points;
+	   //double boundry[2], tinit, tend, predict_params[2];
+
+}
+

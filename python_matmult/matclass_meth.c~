@@ -1,13 +1,6 @@
-#define PY_SSIZE_T_CLEAN
-#include "Python.h"
-//essayer windows aussi
 #include <stdio.h>
 #include <math.h>
 #include "lapacke.h"  // prefer set INCLUDE DIR in setup.py for portability
-
-static PyObject *MatmultError = NULL;
-static PyObject * matmult_system(PyObject *self, PyObject *args);
-
 
 int call_dgesv(int n, double *A, double *B) {
    lapack_int N=n;
@@ -30,7 +23,7 @@ int call_dgesv(int n, double *A, double *B) {
    }
 }
 
-int readvalues(double *a, double *b)  {
+int readvalues(const char *matfile, double *a, double *b)  {
 
    FILE *fdesc;
 //   int n=3;
@@ -44,7 +37,7 @@ int readvalues(double *a, double *b)  {
    int i = 0;
    //matrix a
 
-   fdesc = fopen("matrices.txt", "r");
+   fdesc = fopen(matfile, "r");
    if (fdesc == 0) {
       fprintf(stderr, "Could not open matrices.txt for reading");
       return -1;
@@ -116,76 +109,4 @@ int matmult(int n, int m, int p, double *a, double *b, double *c) {
         return 0;
    }
 }
-
-static PyMethodDef MatmultMethods[] = {
-   {"system", matmult_system, METH_VARARGS,
-	    "numeric matrix multiplication"},
-   {NULL,NULL,0,NULL}
-};
-
-static struct PyModuleDef matmultmodule = {
-   PyModuleDef_HEAD_INIT,
-   "matmult", // name of the module
-    NULL, // module documentation, may be NULL (matmult_doc)
-   -1,        // size of per-interpreter state of the module
-              // or -1 if the module keeps state in global variables
-   MatmultMethods  // defined above
-};
-
-
-PyMODINIT_FUNC PyInit_matmult(void) {
-   PyObject *m;
-
-   m = PyModule_Create(&matmultmodule);
-   if (m==NULL) 
-      return NULL;
-   MatmultError = PyErr_NewException("matmult.error", NULL, NULL);
-   Py_XINCREF(MatmultError);
-   if (PyModule_AddObject(m, "error", MatmultError) < 0) {
-       Py_XDECREF(MatmultError);
-       Py_CLEAR(MatmultError);
-       Py_DECREF(m);
-       return NULL;
-   }
-   return m;
-}
-
-
-static PyObject * matmult_system(PyObject *self, PyObject *args)
-{
-   const int n=3;
-   const int m=2;
-   const int p=2;
-//   PyObject *a;
-   double a[9]={0.,0.,0.,0.,0.,0.,0.,0.,0.};   
-//   PyObject *b;
-   double b[3]={0.,0.,0.};
-   double calloc[3]={0.,0.,0.};
-   PyObject *arg2;
-   int i, sts;
-
-//   if (!PyArg_ParseTuple(args, "(dddddd)(dddd)", &a, &b))
-//      return NULL;
-//   if (!PyArg_ParseTuple(args, "(ddddddddd)(ddd)", &a, &b))
-//      return NULL;
-   sts = readvalues(a, b);
-   if (sts<0) {
-        PyErr_SetString(MatmultError, "numeric mult inputread failed");
-        return NULL;
-   }
-   sts = call_dgesv(n,a,b);
-   if (sts <0) {
-	   PyErr_SetString(MatmultError, "numeric mult failed");
-	   return NULL;
-   }
-   for (i=0; i<3; i++) {
-       calloc[i]=b[i];
-   }
-   printf("%lf %lf %lf", calloc[0], calloc[1], calloc[2]);
-   arg2 = Py_BuildValue("(ddd)", calloc); 
-   Py_DECREF(a);
-   Py_DECREF(b);
-   return PyLong_FromLong(sts);
-}
-
 
