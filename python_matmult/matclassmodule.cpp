@@ -128,13 +128,17 @@ static PyObject * CustomMat_name(CustomMatObject *self, PyObject *Py_UNUSED(igno
 // table a completer
 static PyTypeObject CustomType = {
 //   .ob_base = PyVarObject_HEAD_INIT(NULL, 0),
+//   .tp_name = "custom2.CustomMat",
+//   .tp_doc = PyDoc_STR("Custom objects"),
+//   .tp_basicsize = 0,
+//   .tp_itemsize = 0,
+//   .tp_flags = Py_TPFLAGS-DEFAULT | Py_TPFLAGS_BASETYPE,
+//   .tp_new = CustoMat_new,
 //   .tp_init = (initproc) CustomMat_init,
 //   .tp_methods = CustomMat_methods
-//   .tp_new = CustoMat_new,
 //   .tp_dealloc = (destructor) CustomMat_dealloc,
 //   .tp_members = CustomMat_members,
 //   .tp_methods = Custom_methods,
-//   ...
 }
 
 static PyMethodDef CustomMat_methods[] = {
@@ -143,6 +147,12 @@ static PyMethodDef CustomMat_methods[] = {
    {NULL} //sentinel
 };
 
+static PyModuleDef customatmodule = {
+   .m_base = PyModuleDef_HEAD_INIT,
+   .m_name = "custom2",
+   .m_doc = "Example module that creates an extension type.",
+   .m_size = -1,
+};
   *
   */
 
@@ -168,6 +178,19 @@ static struct PyModuleDef matclassmodule = {
 
 PyMODINIT_FUNC PyInit_matclass(void) {
    PyObject *m;
+i
+ // PyObject *m2;
+ // if (PyType_Ready(&CustomType) < 0)
+ //    return NULL;
+ //
+ //    m2 = PyModule_Create(&custommatmodule);
+ //    if (m2==NULL)
+ //       return NULL;
+ //
+ //    if (PyModule_AddObject(m, "CustomMat", (PyObject *) &CustomType) < 0) {
+ //       Py_DECREF(m2);
+ //       return NULL;
+ //    }
 
    m = PyModule_Create(&matclassmodule);
    if (m==NULL) 
