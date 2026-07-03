@@ -1,0 +1,14 @@
+#pyproject.toml
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mylib-spam"
+version = "0.1"
+
+[tool.setuptools]
+ext-modules = [
+   {name = "mylib.spam", sources = ["spammodule.c"]}
+]
+
