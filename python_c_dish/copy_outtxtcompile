@@ -1,0 +1,3 @@
+gcc -pthread -B /home/frederic/miniconda3/compiler_compat -shared -Wl,-rpath,/home/frederic/miniconda3/lib -Wl,-rpath-link,/home/frederic/miniconda3/lib -L/home/frederic/miniconda3/lib -Wl,-rpath,/home/frederic/miniconda3/lib -Wl,-rpath-link,/home/frederic/miniconda3/lib -L/home/frederic/miniconda3/lib build/temp.linux-x86_64-cpython-310/spammodule.o -o build/lib.linux-x86_64-cpython-310/spam.cpython-310-x86_64-linux-gnu.so
+copying build/lib.linux-x86_64-cpython-310/spam.cpython-310-x86_64-linux-gnu.so -> 
+
