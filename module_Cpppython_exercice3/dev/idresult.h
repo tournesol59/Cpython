@@ -15,10 +15,15 @@ struct result_set {
 typedef RESULT_SET* result_setp;
 
 //methods
+int list_length(result_setp head); 
+ 
 RESULT_SET* create(char *name, int age, char *body); 
  
 result_setp add(char *name, int age, char *body, RESULT_SET *head);
  
 result_setp pop(RESULT_SET *ptr); 
  
-
+result_setp replace(char* matchname, int newage, char* newbody, int selected_id, RESULT_SET *head); 
+ 
+result_setp searchname(char* matchname, RESULT_SET *head);
+ 

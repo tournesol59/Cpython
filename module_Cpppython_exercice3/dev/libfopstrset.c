@@ -43,17 +43,17 @@ int validstrsep(char *buffer, const char* a_delim, int count1, char **result) {
   
    //step 2 , in a while(token) get the token address and save its content:
    printf("Parsing the input string: '%s'\n", buffer);
-   result=(char**) malloc((count+1)*sizeof(char*));
+//   result=(char**) malloc((count+1)*sizeof(char*));
    idx=0;
    //token = strtok_s(buffer, &strmax, delim, &next_token);
    token = strtok(buffer, delim);
-   while (token)
+   while ((token) && (idx<count-1))
    {
-     assert(idx<count-1); 
-     *(result+idx)=strdup(token);
+  //   assert(idx<count-1); 
+     *(result+idx++)=strdup(token);
      //token=strtok_s(NULL, &strmax, delim, &next_token);
-     token=strtok(NULL, delim);
-     idx++;     
+     token=strtok(0, delim);
+     ///idx++;     
    }
    assert(idx==(count-1)); //count-1; 
    *(result+idx++)=0;
@@ -82,13 +82,14 @@ int openforreadline_s(char *filename, result_setp* resLL_p) {
 	fprintf(stderr, "file opening failed");
         return is_ok;
    }
-   // step2: loop over sthe readine
+   // step 2: loop over sthe readine
    count=0; 
    while (fgets(buffer, sizeof buffer, fp) != NULL) {  
 //      if (fgets(buffer, sizeof buffer, fp) == NULL) {  
 
       // step2-1 delegate the task of counting and extracting tokens inside separators
       //      to the subroutine validstrsep
+      result=(char**) malloc((4+1)*sizeof(char*));
       count=validstrsep(buffer, a_delim, count, result);
 
      // step 3: copy the pointed to char in a structure linked list:
@@ -114,4 +115,34 @@ int openforreadline_s(char *filename, result_setp* resLL_p) {
    return is_ok;
 }
 
+int updatelinename(result_setp inputLL_p, char* slname, char* newbody) {
+  int is_ok=EXIT_FAILURE;
+  RESULT_SET* tmp; 
+  int selected_id;
 
+  RESULT_SET* resultLL_p = searchname(slname, *inputLL_p);
+  if (resultLL_p == NULL) {
+     is_ok=1;
+     return is_ok;
+  }
+  if (list_length(resultLL_p) >1) {
+     printf("list of matching lines: \n");
+     tmp=resultLL_p;
+     while (tmp!=NULL) {
+       printf("\t %d \t %s, %d, %s\n", tmp->id, tmp->name, tmp->age, tmp->body);
+       tmp=tmp->next;
+     }
+     printf("\n Enter a record number:\n");
+     char select[2];
+     sscanf("%d\n", &select);
+     selected_id=atol(select);
+  }	 
+  else
+     selected_id=resultLL_p->id;
+ // the modification
+     inputLL_p = replace(slname, tmp->age, newbody, selected_id, inputLL_p); 
+ 
+ //
+  is_ok=0;
+  return is_ok;
+}	

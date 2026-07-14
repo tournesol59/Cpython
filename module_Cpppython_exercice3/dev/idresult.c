@@ -1,4 +1,15 @@
 #include "idresult.h"
+
+//list_length()
+int list_length(result_setp head) {
+   RESULT_SET *ptr=head;	
+   int count=0;
+   while (ptr != NULL) {
+     ptr=ptr->next;
+     count++;
+   }
+   return count;   
+}
 //create
 
 RESULT_SET* create(char *name, int age, char *body) {
@@ -35,7 +46,7 @@ result_setp pop(RESULT_SET *ptr) {
 
 //search for a particular cell for cell->name ="matchname"
 // and replace its body and age
-result_setp replace(char* matchname, int newage, char* newbody, RESULT_SET *head) {
+result_setp replace(char* matchname, int newage, char* newbody, int selected_id, RESULT_SET *head) {
    RESULT_SET* tmp;
    RESULT_SET* tmp_prev;
    tmp=head;
@@ -50,7 +61,8 @@ result_setp replace(char* matchname, int newage, char* newbody, RESULT_SET *head
          tmp = tmp->next;
          count++;
       }
-      if (tmp !=NULL) {//matched item
+      if (tmp != NULL) {//matched item
+       if (tmp->id == selected_id) {
          RESULT_SET* tmp_ins = create(tmp->name, newage, newbody);
          tmp_ins->next = tmp->next;
          //particular case: matched item on head, that why we used a counter
@@ -58,8 +70,42 @@ result_setp replace(char* matchname, int newage, char* newbody, RESULT_SET *head
             head=tmp_ins;
          } else {
             tmp_prev->next=tmp_ins;
-         } 
+         }
+       } 
       }
    }
    return head;
+}
+
+//search for a particular cell for cell->name ="matchname"
+//and return another linked list with all matching cell for field cell->name
+result_setp searchname(char* matchname, RESULT_SET *head) {
+   RESULT_SET* tmp;
+   RESULT_SET* tmp_prev;
+   RESULT_SET* tmp_match;
+   tmp=head;
+   tmp_prev=head;
+   int count;
+   if (tmp==NULL) {
+      printf("empty linked list");
+      exit(1);
+   } else {
+      while ((tmp != NULL) && (strcmp(tmp->name, (const char*) matchname))) {
+         tmp_prev = tmp;
+         tmp = tmp->next;
+      }
+      if (tmp != NULL) {//matched item
+        if (count==0) { 
+	 tmp_match = create(tmp->name, tmp->age, tmp->body);
+         tmp_match->id =tmp->id;
+         count++;
+        }
+	else {
+         tmp_match = add(tmp->name, tmp->age, tmp->body, tmp_match);
+	 tmp_match->id =tmp->id;
+         count++;
+	}
+      }
+   }
+   return tmp_match;      
 }
