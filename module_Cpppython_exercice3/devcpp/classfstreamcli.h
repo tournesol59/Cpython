@@ -1,10 +1,17 @@
 #include <iostream>
+#include <fstream>
 #include <cstring>
 #include <string>
-//#include "idresultext.h"
+#include <vector>
+#include <sstream>
+#include <assert.h>
+#include "idresult_adv.h"
 
 //extern "C" int openforread(char *filename);
 //extern "C" int handleregex(char *input, char *target);
+
+#define OPF_EXIT_OPENREAD 1
+#define OPF_EXIT_OPENWRITE 2
 
 class OPF_PRGMER {
 
@@ -15,13 +22,22 @@ class OPF_PRGMER {
        ~OPF_PRGMER();
 
        int openforreadlines();
-       int writelineatend(char **charobject);
+       int openforreadlines_st(int nlines);
+       int openforreadcharac();
+       
+       int writeresultsetToStr(std::string strhead, result_setp ptr, int nline);
+       int writesetatend(result_setp resultLL_ptr);
+       //int writelineatend(std::string strobj);
+       //int writecharacatend(char **charobject);
+       int readToResultSet(std::string strhead, std::string strline, result_setp resultLL_ptr, int iline);
+
        
     private:
        char strconn[100];
        char modus[2];
        int count;
        int fserr;      
-
-       int reportErrorResult(int errcode, char *errtext);
+       RESULT_SET* resultLL_p;
+       
+       int reportErrorResult(int errcode, std::string errtext);
 }; 
