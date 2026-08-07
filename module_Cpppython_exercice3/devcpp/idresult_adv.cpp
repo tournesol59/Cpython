@@ -117,7 +117,7 @@ result_setp replace(char* matchname, int newage, char* newbody, int selected_id,
    RESULT_SET* tmp_prev;
    tmp=head;
    tmp_prev=head;
-   int count;
+   int count=0;
    if (tmp==NULL) {
       printf("empty linked list");
       exit(1);

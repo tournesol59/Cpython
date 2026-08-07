@@ -85,27 +85,33 @@ result_setp searchname(char* matchname, RESULT_SET *head) {
    RESULT_SET* tmp_match;
    tmp=head;
    tmp_prev=head;
-   int count;
+   int count=0;
    if (tmp==NULL) {
       printf("empty linked list");
       exit(1);
    } else {
-      while ((tmp != NULL) && (strcmp(tmp->name, (const char*) matchname))) {
+      while ((tmp != NULL)) {
+         if (strcmp(tmp->name, (const char*) matchname)) 
+         {
+            tmp_prev = tmp;
+            tmp = tmp->next;
+         }
+         else { // if matching item
+            if (count==0) { // matched item for the first time
+ 	       tmp_match = create(tmp->name, tmp->age, tmp->body);
+               tmp_match->id =tmp->id;
+               count++;
+            }
+            else { // successive matching items
+               tmp_match = add(tmp->name, tmp->age, tmp->body, tmp_match);
+	       tmp_match->id =tmp->id;
+               count++;
+	    }
+         }//all in all the next record has to be examinated
          tmp_prev = tmp;
          tmp = tmp->next;
       }
-      if (tmp != NULL) {//matched item
-        if (count==0) { 
-	 tmp_match = create(tmp->name, tmp->age, tmp->body);
-         tmp_match->id =tmp->id;
-         count++;
-        }
-	else {
-         tmp_match = add(tmp->name, tmp->age, tmp->body, tmp_match);
-	 tmp_match->id =tmp->id;
-         count++;
-	}
-      }
+
    }
    return tmp_match;      
 }

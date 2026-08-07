@@ -29,8 +29,8 @@ class OPF_PRGMER {
        int writesetatend(result_setp resultLL_ptr);
        //int writelineatend(std::string strobj);
        //int writecharacatend(char **charobject);
-       int readToResultSet(std::string strhead, std::string strline, result_setp resultLL_ptr, int iline);
-
+       int readToResultSetHead(std::string strhead, result_setp resultLL_ptr, int iline);
+       int readToResultSetData(std::string strline, result_setp resultLL_ptr, int iline);
        
     private:
        char strconn[100];

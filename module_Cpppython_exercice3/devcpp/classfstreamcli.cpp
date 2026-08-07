@@ -3,6 +3,7 @@
 //#include "idresult.h"
 #include "classfstreamcli.h"
 #include <assert.h> 
+#include <regex>
 
 /* declared in .h
 class OPF_PRGMER {
@@ -63,7 +64,9 @@ int OPF_PRGMER::openforreadlines() {
    return 0; 
 }
 
+// another method, this time parse each line assumed in csv format and save in member list
 int OPF_PRGMER::openforreadlines_st(int nlines) {
+   int is_ok=0;
    std::string connfile(strconn);
    std::ifstream fs;
    std::string line;
@@ -92,7 +95,8 @@ int OPF_PRGMER::openforreadlines_st(int nlines) {
       while (getline(fs, line) && (count<nlines)) {  // adding a counter was necessary
          // because strangely the handling of the std::ifstream::failbit causes error 
          // when the last line is reached
-         
+      //while (getline(fs, line)) {
+          
          // use a stringstream object to split each line with the separator (delim)
          std::istringstream iss(line);
          std::string temp;
@@ -101,30 +105,49 @@ int OPF_PRGMER::openforreadlines_st(int nlines) {
          int i=0;
          
          if (count == 0) {
-            readToResultSet(strhead, line, element_list, count);
+            readToResultSetHead(strhead, element_list, count);
             count++;
          }
    	  	 else {
          // else
+         // readToResultSetData(line, element_list, count); // this proc shall be created
          	std::cout << "Parsing line " << std::endl << line << std::endl;
+         	const std::regex e1("[a-zA-Z]+");
+         	const std::regex e2("[0-9]+");
          	while (getline(iss, temp, delim)) {
             	if (std::istringstream(temp) >> x) {
                	switch(i)
                	{
                     case 0:
-                    	strcpy(name, (const char*) x.c_str());
+                        if (std::regex_match(x, e1)) {  
+                    	    strcpy(name, (const char*) x.c_str());
+                    	}
+                    	else {
+                    	   memset(name, '\0', sizeof name); 
+                    	}
                     	break;   
                   	case 1:
+                  	    //if (std::regex_match(x, e2)) {
+                  	       
                     	age = atol(x.c_str());
                     	break;       
                   	case 2:
-                    	strcpy(body, (const char*) x.c_str());
+                        if (std::regex_match(x, e1)) {  
+                    	   strcpy(body, (const char*) x.c_str());
+                    	}
+                    	else {
+                    	   memset(body, '\0', sizeof body); 
+                    	}
                     	break;                                      
                	}
                	i++;
             }   
          }
-         //assert(i==3);
+         assert(i==3);
+         if ((name[0]=='\0') || (body[0]=='\0')) {
+            std::cout << "formatting of the fields of line " << count << " aren t good \n";   
+         }
+         
          // add a new cell at the top of the linked list with last infos
          add_elem((const char*) name, age, (const char*) body, element_list);
          i=0; // for next line 
@@ -137,15 +160,17 @@ int OPF_PRGMER::openforreadlines_st(int nlines) {
       // this has an advantage: pop order in list resultLL_p correspond to order in the file 
       //check
       fs.close();
+      return is_ok;
       
    }  catch (const std::exception& e) {
       std::ostringstream msg;
       msg << "Opening file '" << connfile << "' failed, it either does not exist or is not accessible.";
       reportErrorResult(1, msg.str());
-      throw std::runtime_error(msg.str());   
+      throw std::runtime_error(msg.str()); 
+      is_ok=1;
+      return is_ok;  
    }
    
-   return 0;
 }
 
 int OPF_PRGMER::openforreadcharac() {
@@ -174,19 +199,18 @@ int OPF_PRGMER::openforreadcharac() {
    
    // Close file
    file.close();
-   return 0;   
+   return is_ok;   
 }
 
 
-int OPF_PRGMER::readToResultSet(std::string strhead, std::string strline, result_setp resultLL_ptr, int iline)
+int OPF_PRGMER::readToResultSetHead(std::string strhead, result_setp resultLL_ptr, int iline)
 {
    // strhead contains the titles of the columns, only commas-separated strings
    // stritem contains a line of different values
    // resultLL_ptr contains a pointer to the linked list output structure
    
-   
    int is_ok=1;
-  // faire avec strtok
+   //faire avec strtok
    std::string sub(","); // keep it for counting inside a std::string ..
    char sep[]=",";       // .. but parsing will be used with C the strtok function
    char strcopy[100];
@@ -194,7 +218,7 @@ int OPF_PRGMER::readToResultSet(std::string strhead, std::string strline, result
      // copy the header input string into a char[]
    strcpy(strcopy, strhead.c_str());
       
-   int count=0; // for better and safe behavior
+   size_t count=0; // for better and safe behavior
 // count the occurences of separator sub
    for (size_t offset=strhead.find(sub); offset != std::string::npos; offset=strhead.find(sub, offset+sub.length()))
    {
@@ -232,14 +256,21 @@ int OPF_PRGMER::readToResultSet(std::string strhead, std::string strline, result
    is_ok=0;
    return is_ok;
 }
-   
+
+// this proc shall be used for parsing a single line but of Data (not header)
+int readToResultSetData(std::string strline, result_setp resultLL_ptr, int iline) {
+   int is_ok=0;
+   //...
+   return is_ok;
+}
+          
 int OPF_PRGMER::writeresultsetToStr(std::string strhead, result_setp ptr, int nline) {
    // concatenate a cell object data into a single string
    
    int is_ok=1;
    std::string sub(","); // keep it for counting inside a std::string ..
-   char sep[]=",";       // .. but parsing will be used with C the strtok function
-   char strcopy[100];
+  // char sep[]=",";       // .. but parsing will be used with C the strtok function
+  // char strcopy[100];
    //char crep='\0'; // to delete
    //std::string rep(crep); // to delete
  

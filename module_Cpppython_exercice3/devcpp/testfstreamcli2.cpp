@@ -5,12 +5,12 @@
 
 //#define __cplusplus
 
-int main() {
+int main(int argc, char** argv) {
    char filesample[40];
    char modusw[2];
-   int nline=3;
+   int nlines=atol(argv[1]);  // 3;
    // char** msgtext=(char**) malloc(2*sizeof (char*)); // must be followed by two other malloc of char*
-   char msgtext[][40]={"Hello World", "Bonjour", ""}; // this has the advantage of setting a fixed length for each string
+   //char msgtext[][40]={"Hello World", "Bonjour", ""}; // this has the advantage of setting a fixed length for each string
 
    result_setp resultLL_p;
    
@@ -28,7 +28,7 @@ int main() {
    strcpy(modusw, "r");
    // read
    OPF_PRGMER opf_pgexample(filesample, modusw);
-   opf_pgexample.openforreadlines_st(nline);
+   opf_pgexample.openforreadlines_st(nlines);
    
    //test RESULT_SET from C
    /*

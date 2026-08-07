@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "idresult.h"
-#include <assert.h>
+//#include <assert.h>
 
 int validstrsep(char *buffer, const char* a_delim, int count1, char **result) {
    int is_ok=EXIT_FAILURE;
@@ -55,7 +55,7 @@ int validstrsep(char *buffer, const char* a_delim, int count1, char **result) {
      token=strtok(0, delim);
      ///idx++;     
    }
-   assert(idx==(count-1)); //count-1; 
+   //assert(idx==(count-1)); //count-1; 
    *(result+idx++)=0;
 
    is_ok=0;
@@ -99,8 +99,8 @@ int openforreadline_s(char *filename, result_setp* resLL_p) {
       int age = atol((const char*) *(result+1));
       char body[40];
       strcpy(body, (const char*) *(result+2));
-      printf("name: %s, age: %d, body: %s\n", *(result),*(result+1),*(result+2)); //debug
-
+      printf("name: %s, age: %d, body: %s\n", name, age, body); //debug
+      
       if (irow==0) {
          *resLL_p = create(name, age, body);
       }
@@ -117,30 +117,34 @@ int openforreadline_s(char *filename, result_setp* resLL_p) {
 
 int updatelinename(result_setp inputLL_p, char* slname, char* newbody) {
   int is_ok=EXIT_FAILURE;
-  RESULT_SET* tmp; 
-  int selected_id;
 
-  RESULT_SET* resultLL_p = searchname(slname, *inputLL_p);
+  int selected_id;
+  char select[2];
+  RESULT_SET* tmp;
+  RESULT_SET* resultLL_p = searchname(slname, inputLL_p);
   if (resultLL_p == NULL) {
      is_ok=1;
      return is_ok;
   }
+  tmp=resultLL_p; 
   if (list_length(resultLL_p) >1) {
      printf("list of matching lines: \n");
-     tmp=resultLL_p;
      while (tmp!=NULL) {
        printf("\t %d \t %s, %d, %s\n", tmp->id, tmp->name, tmp->age, tmp->body);
        tmp=tmp->next;
      }
-     printf("\n Enter a record number:\n");
-     char select[2];
-     sscanf("%d\n", &select);
+     printf("\n Enter a record number to select of the matched lines to update:\n");
+ 
+     sscanf("%d\n", select);
      selected_id=atol(select);
   }	 
-  else
+  else 
+  {   
      selected_id=resultLL_p->id;
+  }
+
  // the modification
-     inputLL_p = replace(slname, tmp->age, newbody, selected_id, inputLL_p); 
+     inputLL_p = replace(slname, tmp->age, newbody, selected_id, inputLL_p); // age is unchanged
  
  //
   is_ok=0;

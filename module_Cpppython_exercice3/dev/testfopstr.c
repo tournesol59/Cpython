@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
    if (openforreadline_s((char*) filename, &resultLL_p)==EXIT_FAILURE) {
      printf("error opening of file sample");
    }
-
+   // now retrieve content of the queue
    while (resultLL_p != NULL) {
       printf("item %d: ",i);
       pop(resultLL_p);

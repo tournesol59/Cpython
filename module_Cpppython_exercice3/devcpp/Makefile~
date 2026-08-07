@@ -1,0 +1,39 @@
+#Makefile
+CC=g++
+CANSI=gcc
+CXXFLAGS= -g -std=c++11 -Wall -O2 # -Wstringop-truncation
+CANSIFLAGS= -g -Wall -O2
+LOADER=g++
+LOADOPTS='-g'
+
+HOME=/home/frede/Cmodules
+CINCLUDE=./
+
+OBJ1=./classfstreamcli.o \
+    ./idresult_adv.o \
+    ./testfstreamcli.o
+
+OBJ2=./classfstreamcli2.o \
+    ./idresult_adv.o \
+    ./testfstreamcli2.o
+
+
+testfstreamcli: testfstreamcli.cpp
+	${CC} ${CXXFLAGS} -o testfstreamcli.o $< -I${CINCLUDE}
+
+testfstreamcli2: testfstreamcli2.cpp
+	${CC} ${CXXFLAGS} -o testfstreamcli2.o $< -I${CINCLUDE}
+
+classfstreamcli: classfstreamcli.cpp 
+	${CC} ${CXXFLAGS} -o classfstreamcli.o $< -I${CINCLUDE}
+
+idresult_adv: idresult_adv.cpp
+	${CC} ${CXXFLAGS} -o idresult_adv.o $< -I${CINCLUDE}
+
+idqueue_adv: idqueue_adv.cpp
+	${CC} ${CXXFLAGS} -o idqueue_adv.o $< -I${CINCLUDE}
+
+#main no ref to std=c++11 !
+main: ${OBJ2}
+	${LOADER} ${LOADOPTS} -o testfstreamcli2 ${OBJ2} -I{CINCLUDE}
+
