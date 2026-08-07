@@ -1,0 +1,3 @@
+email,insurance,refnum,departure,destination,spare,spareref00
+sausan@aol.com,1,BF6V4N,Toulouse,Bayonne,economic,1,
+bobw@aol.com,1,TUVQ2W,Toulouse,Bordeaux,economic,2,
