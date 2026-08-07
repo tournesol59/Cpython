@@ -54,6 +54,8 @@ int add_elem(const char *name, int age, const char *body, RESULT_SET *head) {
         strcpy(ptr->body, body);
         ptr->age=age;
         ptr->next=head;
+        //! correction here
+        //head = ptr;
       }
       else 
       {  // handle mem error
