@@ -1,0 +1,6 @@
+from ctypes import *
+print(windll.kernel32)
+<WinDLL 'kernel32', handle ... at ...>
+print(cdll.msvcrt)
+<CDLL 'msvcrt', handle ... at ...>
+libc = cdll.msvcrt

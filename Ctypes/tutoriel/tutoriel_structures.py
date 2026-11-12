@@ -1,0 +1,15 @@
+from ctypes import *
+
+FourDouble = c_double * 4
+
+class IDENT05_TESTDISC(Structure):
+    _fields_ = [("Ts", c_int),
+                ("size", c_int),
+                ("maxsize", c_int),
+                ("nc", c_int),
+                ("nd", c_int),
+                FourDouble coeffs]
+
+dcoeffs = FourDouble(1, -0.975, 0.025, 0.)
+ex_test_disc = IDENT05_TESTDISC(100, 2, 2, 0.1, dcoeffs)
+
